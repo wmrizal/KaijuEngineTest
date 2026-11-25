@@ -11,10 +11,12 @@ import (
 
 // Renderer handles all rendering operations using Ebiten
 type Renderer struct {
-	title  string
-	width  int
-	height int
-	game   *Game
+	title      string
+	width      int
+	height     int
+	game       *Game
+	updateFunc func(float64) error
+	drawFunc   func(*ebiten.Image, int)
 }
 
 // Game implements ebiten.Game interface
@@ -37,11 +39,19 @@ func NewRenderer(title string, width, height int) *Renderer {
 // Update updates game state (required by ebiten.Game)
 func (g *Game) Update() error {
 	g.frameNum++
+	if g.renderer.updateFunc != nil {
+		return g.renderer.updateFunc(1.0 / float64(ebiten.TPS()))
+	}
 	return nil
 }
 
 // Draw renders the frame (required by ebiten.Game)
 func (g *Game) Draw(screen *ebiten.Image) {
+	if g.renderer.drawFunc != nil {
+		g.renderer.drawFunc(screen, g.frameNum)
+		return
+	}
+
 	// Clear background
 	screen.Fill(color.RGBA{10, 10, 20, 255})
 
@@ -79,6 +89,16 @@ func (r *Renderer) Run() error {
 	ebiten.SetWindowSize(r.width, r.height)
 	ebiten.SetWindowTitle(r.title)
 	return ebiten.RunGame(r.game)
+}
+
+// SetUpdateFunc sets the function called for each game update.
+func (r *Renderer) SetUpdateFunc(updateFunc func(float64) error) {
+	r.updateFunc = updateFunc
+}
+
+// SetDrawFunc sets the function called for each rendered frame.
+func (r *Renderer) SetDrawFunc(drawFunc func(*ebiten.Image, int)) {
+	r.drawFunc = drawFunc
 }
 
 // Clear clears the screen

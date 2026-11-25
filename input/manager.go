@@ -1,22 +1,49 @@
 package input
 
+import "github.com/hajimehoshi/ebiten/v2"
+
 // Manager manages input events
 type Manager struct {
-	quit bool
+	quit           bool
+	horizontalAxis float64
 }
 
 // NewManager creates a new input manager
 func NewManager() *Manager {
-	return &Manager{
-		quit: false,
+	return &Manager{}
+}
+
+// Update refreshes the current keyboard state.
+func (m *Manager) Update() {
+	m.update(
+		ebiten.IsKeyPressed(ebiten.KeyEscape),
+		ebiten.IsKeyPressed(ebiten.KeyA),
+		ebiten.IsKeyPressed(ebiten.KeyD),
+	)
+}
+
+func (m *Manager) update(escape, left, right bool) {
+	if escape {
+		m.quit = true
+	}
+
+	m.horizontalAxis = 0
+	if left {
+		m.horizontalAxis--
+	}
+	if right {
+		m.horizontalAxis++
 	}
 }
 
 // GetQuit checks if quit signal was received
 func (m *Manager) GetQuit() bool {
-	// In a real implementation, this would check for window close events
-	// and keyboard input (e.g., ESC key)
 	return m.quit
+}
+
+// GetHorizontalAxis returns -1 for left, 1 for right, and 0 when idle.
+func (m *Manager) GetHorizontalAxis() float64 {
+	return m.horizontalAxis
 }
 
 // SetQuit sets the quit flag

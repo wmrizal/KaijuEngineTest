@@ -61,7 +61,7 @@ e256ece - Update documentation with Ebiten graphics features
 ## 🚀 Next Development Steps
 
 ### Phase 1: Input Handling
-- [ ] Keyboard input (arrow keys for movement)
+- [x] Keyboard input (A/D keys for left/right movement and Escape to exit)
 - [ ] Mouse input support
 - [ ] Gamepad support
 

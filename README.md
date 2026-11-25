@@ -16,6 +16,8 @@ go build -o KaijuEngine.exe
 
 A window will appear showing:
 - **Animated bouncing circles** in various colors
+- **A/D keyboard movement** for the player square
+- **ESC keyboard exit**
 - **FPS counter** in the top-left
 - **Colored shapes** rendering in real-time
 - **Blue background** with interactive demo
@@ -50,10 +52,16 @@ KaijuEngine/
 - **Ebiten v2** - 2D graphics and game framework
 - **Vector drawing** - For shapes and primitives
 
+## Controls
+
+- `A`: move left
+- `D`: move right
+- `ESC`: exit the demo
+
 ## Next Steps
 
-1. Add keyboard input handling
-2. Create game entities (players, enemies)
+1. Add mouse and gamepad input
+2. Create more game entities (players, enemies)
 3. Implement collision detection
 4. Add sprite rendering
 5. Create a simple game (Pong, Breakout)
