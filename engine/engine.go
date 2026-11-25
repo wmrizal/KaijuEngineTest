@@ -5,7 +5,6 @@ import (
 	"kaijuengine/game"
 	"kaijuengine/input"
 	"kaijuengine/rendering"
-	"time"
 )
 
 // Engine represents the core game engine
@@ -16,7 +15,6 @@ type Engine struct {
 	running    bool
 	deltaTime  float64
 	targetFPS  int
-	lastFrame  time.Time
 	renderer   *rendering.Renderer
 	inputMgr   *input.Manager
 	gameState  *game.GameState
@@ -36,44 +34,14 @@ func NewEngine(title string, width, height int) *Engine {
 	}
 }
 
-// Run starts the game loop
+// Run starts the game loop using Ebiten
 func (e *Engine) Run() error {
 	fmt.Printf("Starting %s (%dx%d) at %d FPS\n", e.title, e.width, e.height, e.targetFPS)
 	
 	e.running = true
-	e.lastFrame = time.Now()
-	
-	frameTargetDuration := time.Duration(1000/e.targetFPS) * time.Millisecond
 
-	// Game loop
-	for e.running && e.frameCount() < 300 { // Run for ~5 seconds for demo
-		frameStart := time.Now()
-
-		// Handle input
-		if e.inputMgr.GetQuit() {
-			e.running = false
-		}
-
-		// Update game state
-		e.Update(e.deltaTime)
-
-		// Render frame
-		e.Render()
-
-		// Frame rate limiting
-		elapsedTime := time.Since(frameStart)
-		if elapsedTime < frameTargetDuration {
-			time.Sleep(frameTargetDuration - elapsedTime)
-		}
-
-		// Calculate delta time
-		now := time.Now()
-		e.deltaTime = now.Sub(e.lastFrame).Seconds()
-		e.lastFrame = now
-	}
-
-	fmt.Println("Engine shutdown complete")
-	return nil
+	// Run the renderer (which uses Ebiten for the game loop)
+	return e.renderer.Run()
 }
 
 // Update updates game logic
@@ -84,12 +52,10 @@ func (e *Engine) Update(deltaTime float64) {
 // Render renders a frame
 func (e *Engine) Render() {
 	e.renderer.Clear()
-	e.renderer.DrawText(fmt.Sprintf("FPS: %.0f", 1.0/e.deltaTime), 10, 10)
-	e.renderer.DrawText("KaijuEngine - Basic Game Engine", 10, 30)
 	e.renderer.Present()
 }
 
-// frameCount is a simple frame counter for demo purposes
-func (e *Engine) frameCount() int {
-	return int(e.lastFrame.Unix() * 100 % 300)
+// GetGameState returns the game state
+func (e *Engine) GetGameState() *game.GameState {
+	return e.gameState
 }
