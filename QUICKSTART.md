@@ -2,141 +2,133 @@
 
 ## 🦖 Welcome to KaijuEngine!
 
-A lightweight, modular 2D game engine written in Go.
+A lightweight 2D game engine in Go with **real graphics rendering** via Ebiten.
 
-## Quick Start (5 minutes)
+## 🎮 What You Get
 
-### 1. Build the Engine
+When you run the demo, you'll see:
+- **Animated bouncing circles** in blue/purple
+- **FPS counter** showing real-time performance
+- **Smooth 60 FPS rendering**
+- **Colorful shapes** (squares, circles) in real-time
+
+## ⚡ 2-Minute Setup
+
+### 1. Build
 ```bash
 cd D:\repos\KaijuEngine
 go build -o KaijuEngine.exe
 ```
 
-### 2. Run the Engine
+### 2. Run
 ```bash
 .\KaijuEngine.exe
 ```
 
-You should see:
+**A window opens with animated graphics!** Press ESC or close the window to exit.
+
+## 📋 What's Inside
+
+| Component | Purpose |
+|-----------|---------|
+| **engine/** | Game loop & update/render cycle |
+| **rendering/** | Graphics with Ebiten |
+| **game/** | Entity management |
+| **input/** | Input handling |
+
+## 🎨 Rendering Features
+
+✅ Vector drawing (circles, rectangles)  
+✅ Color support (RGBA)  
+✅ FPS counter  
+✅ 60 FPS target  
+✅ Smooth animations  
+
+## 💻 Key Code Snippets
+
+### Create the Engine
+```go
+gameEngine := engine.NewEngine("KaijuEngine", 800, 600)
+gameEngine.Run() // Opens window and starts demo
 ```
-🦖 KaijuEngine - Game Engine
-============================
-Starting KaijuEngine (800x600) at 60 FPS
-Engine shutdown complete
-```
-
-## Project Structure
-
-```
-KaijuEngine/
-├── main.go              ← Entry point - starts the engine
-├── go.mod               ← Go module manifest
-├── engine/              ← Core game loop
-│   └── engine.go        ← Engine implementation
-├── game/                ← Game state & entities
-│   └── state.go         ← Entity and GameState types
-├── rendering/           ← Graphics system (placeholder)
-│   └── renderer.go      ← Renderer interface
-└── input/               ← Input management
-    └── manager.go       ← Input handler
-```
-
-## Key Components
-
-### Engine (`engine/engine.go`)
-Manages the game loop:
-- Fixed 60 FPS update rate
-- Automatic delta time calculation
-- Coordinates Update → Render cycle
-
-### GameState (`game/state.go`)
-Holds game entities and logic:
-- Entity management
-- Position/velocity updates
-- Easy to extend with custom logic
-
-### Renderer (`rendering/renderer.go`)
-Graphics interface (ready for implementation):
-- Currently placeholders
-- Ready for graphics library integration (Ebiten, raylib-go, etc.)
-
-### InputManager (`input/manager.go`)
-Input handling interface:
-- Extensible design
-- Ready for keyboard/mouse/gamepad support
-
-## Common First Steps
 
 ### Add an Entity
 ```go
 entity := &game.Entity{
-    ID:     1,
-    X:      100,
-    Y:      100,
-    Width:  32,
-    Height: 32,
+    ID: 1,
+    X: 100, Y: 100,
+    Width: 32, Height: 32,
     Active: true,
-    VelX:   100,  // pixels/sec
-    VelY:   0,
+    VelX: 100,  // pixels/sec
+    VelY: 0,
 }
-gameState.AddEntity(entity)
+gameEngine.GetGameState().AddEntity(entity)
 ```
 
-### Extend the Engine
-Edit `engine/engine.go` → `Update()` method to add custom game logic.
-
-### Add Graphics
-1. Choose a library: **Ebiten** recommended
-2. Install: `go get github.com/hajimehoshi/ebiten/v2`
-3. Update `rendering/renderer.go` with actual graphics calls
-4. Update game loop in `engine/engine.go` to use renderer
-
-## Next: Building Your First Game
-
-See [DEVGUIDE.md](DEVGUIDE.md) for:
-- Detailed architecture overview
-- Development roadmap
-- Graphics library recommendations
-- Example implementations
-
-## Useful Commands
-
-```bash
-# Format code
-go fmt ./...
-
-# Check for issues
-go vet ./...
-
-# Run tests (when added)
-go test ./...
-
-# Clean build
-go clean
-go build -o KaijuEngine.exe
-
-# Check module dependencies
-go list -m all
+### Draw Shapes
+```go
+// In rendering/renderer.go Draw() method:
+renderer.DrawFilledCircle(screen, 100, 100, 25, color.RGBA{255, 0, 0, 255})
+renderer.DrawFilledRect(screen, 50, 50, 100, 100, color.RGBA{0, 255, 0, 255})
 ```
 
-## Recommended Next Features
+## 🚀 Next: Building a Game
 
-1. **Graphics Library Integration** - Render sprites and text
-2. **Keyboard Input** - Handle player controls
-3. **Collision Detection** - Basic AABB collision
-4. **Sound System** - Play effects and music
-5. **Tile Maps** - Build level layouts
+### Step 1: Add Input
+```go
+if inputMgr.IsKeyPressed(ebiten.KeyArrowLeft) {
+    player.VelX = -300
+}
+```
 
-## Resources
+### Step 2: Collision Detection
+```go
+func CheckCollision(e1, e2 *game.Entity) bool {
+    return e1.X < e2.X+e2.Width &&
+           e1.X+e1.Width > e2.X &&
+           e1.Y < e2.Y+e2.Height &&
+           e1.Y+e1.Height > e2.Y
+}
+```
 
-- [Go Official Docs](https://golang.org/doc/)
-- [Ebiten Documentation](https://ebiten.org/)
-- [Game Programming Patterns](https://gameprogrammingpatterns.com/)
+### Step 3: Create Your Game
+Modify `main.go` to add:
+- Player entity with keyboard controls
+- Enemy entities with AI
+- Game logic and win/lose conditions
 
-## License
+## 📚 Resources
 
-MIT
+- **[DEVGUIDE.md](DEVGUIDE.md)** - Architecture deep dive
+- **[Ebiten Docs](https://ebiten.org/)** - Graphics library reference
+- **[Game Patterns](https://gameprogrammingpatterns.com/)** - Design patterns
+
+## 🎮 Project Ideas
+
+1. **Pong** - 2 paddles, 1 ball (easiest)
+2. **Breakout** - Paddle, blocks, ball (medium)
+3. **Space Shooter** - Player ship, enemies, bullets (medium)
+4. **Platformer** - Player, platforms, gravity (harder)
+
+## 💡 Tips
+
+- Use `rendering/renderer.go` to add new drawing functions
+- Use `game/state.go` to add game logic
+- Use `input/manager.go` to handle player input
+- Run `go fmt ./...` before committing
+
+## ✅ Verification
+
+You know it's working when:
+1. ✅ Executable builds without errors
+2. ✅ Window appears with blue background
+3. ✅ Colored circles animate smoothly
+4. ✅ FPS counter displays in top-left
+5. ✅ Window closes when you press ESC
 
 ---
 
-**Happy game development! 🎮**
+**Happy game development!** 🎮
+
+For more details, see [DEVGUIDE.md](DEVGUIDE.md)
+
